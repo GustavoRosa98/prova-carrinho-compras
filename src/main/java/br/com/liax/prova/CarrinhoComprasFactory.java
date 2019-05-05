@@ -1,11 +1,17 @@
 package br.com.liax.prova;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Classe responsável pela criação e recuperação dos carrinhos de compras.
  */
 public class CarrinhoComprasFactory {
+    
+    private HashMap<String, CarrinhoCompras> mapaCarrinhos;
 
 	public CarrinhoComprasFactory() {
 	}
@@ -19,6 +25,20 @@ public class CarrinhoComprasFactory {
      * @return CarrinhoCompras
      */
     public CarrinhoCompras criar(String identificacaoCliente) {
+        //Carrinho de compras para retornar o resultado.
+        CarrinhoCompras carrinho = new CarrinhoCompras(identificacaoCliente);
+        
+        //Mapeia a identificação fornecida no mapa de carrinhos, verificando se ele já existe.
+        if(mapaCarrinhos.containsKey(identificacaoCliente)){//Caso já exista:
+            //Recupera o carrinho encontrado no mapeamento.
+            carrinho = (CarrinhoCompras)mapaCarrinhos.get(identificacaoCliente);
+            
+        }else{//Caso não exista:
+            //Adiciona o novo carrinho ao mapa.
+            mapaCarrinhos.put(identificacaoCliente, carrinho);
+        }
+        //Retorna o carrinho.
+        return carrinho;
     }
 
     /**
@@ -31,6 +51,28 @@ public class CarrinhoComprasFactory {
      * @return BigDecimal
      */
     public BigDecimal getValorTicketMedio() {
+        //Lista para receber os carrinhos de compras.
+        List<CarrinhoCompras> listaCarrinhos = new ArrayList<>(mapaCarrinhos.values());
+        
+        //Variável BigDecimal auxiliar para somar os valores totais dos carrinhos.
+        BigDecimal totalCarrinhos = new BigDecimal("0.0");
+        
+        //Percorre toda a lista de carrinhos, somando seus totais à variável auxiliar.
+        listaCarrinhos.forEach((car) -> {
+            totalCarrinhos.add(car.getValorTotal());
+        });        
+        //Agora a variável totalCarrinhos já possui a soma dos valores totais de todos os carrinhos.
+        
+        //Novo BigDecimal contendo o número de carrinhos da lista, que será usado para calcular a média.
+        BigDecimal numeroCarrinhos = new BigDecimal(listaCarrinhos.size());
+        
+        //Nova variável de média dos totais, que recebe a soma deles dividida pelo número de carrinhos na lista.
+        //O arredondamento de 2 casas depois da vírgula já é executado nesse mesmo cálculo.
+        BigDecimal mediaTotalCarrinhos = totalCarrinhos.divide(numeroCarrinhos, 2, RoundingMode.HALF_UP);
+        
+        //Retorna a média calculada.
+        return mediaTotalCarrinhos;
+        
     }
 
     /**
@@ -42,6 +84,16 @@ public class CarrinhoComprasFactory {
      * e false caso o cliente não possua um carrinho.
      */
     public boolean invalidar(String identificacaoCliente) {
+        try{
+            //Apaga o carrinho do mapa, baseado na identificação fornecida.
+            mapaCarrinhos.remove(identificacaoCliente);
+            
+            //Tendo sucesso, retorna true.
+            return true;
+            
+        } catch (RuntimeException e){//Caso o carrinho não exista no mapa, retorna false.
+            return false;
+        }
     }
 
 }

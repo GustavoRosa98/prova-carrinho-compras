@@ -21,6 +21,9 @@ public class Item {
      * @param quantidade
      */
     public Item(Produto produto, BigDecimal valorUnitario, int quantidade) {
+        this.produto = produto;
+        this.valorUnitario = valorUnitario;
+        this.quantidade = quantidade;
     }
 
     /**
@@ -29,6 +32,7 @@ public class Item {
      * @return Produto
      */
     public Produto getProduto() {
+        return produto;
     }
 
     /**
@@ -37,6 +41,7 @@ public class Item {
      * @return BigDecimal
      */
     public BigDecimal getValorUnitario() {
+        return valorUnitario;
     }
 
     /**
@@ -45,6 +50,21 @@ public class Item {
      * @return int
      */
     public int getQuantidade() {
+        return quantidade;
+    }
+    
+    //Métodos SET para atribuição de valor aos atributos:
+    
+    public void setProduto(Produto prod){
+        this.produto = prod;
+    }
+    
+    public void setValorUnitario(BigDecimal vlrUnit){
+        this.valorUnitario = vlrUnit;
+    }
+    
+    public void setQuantidade(int qtde){
+        this.quantidade = qtde;
     }
 
     /**
@@ -53,6 +73,7 @@ public class Item {
      * @return BigDecimal
      */
     public BigDecimal getValorTotal() {
+        return valorUnitario.multiply(new BigDecimal(quantidade));
     }
 
 }
